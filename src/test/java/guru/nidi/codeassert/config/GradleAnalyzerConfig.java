@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradleAnalyzerConfig  extends  AnalyzerConfig {
+public class GradleAnalyzerConfig extends AnalyzerConfig {
     public static Gradle gradle() {
         return gradle(null);
     }
@@ -23,19 +23,19 @@ public class GradleAnalyzerConfig  extends  AnalyzerConfig {
         public AnalyzerConfig main(String... packages) {
             return new AnalyzerConfig(
                     path(packages, "src/main/java/"),
-                    path(packages, "build/classes/java/main/"));
+                    path(packages, "build/classes/java/main/", "out/production/classes"));
         }
 
         public AnalyzerConfig test(String... packages) {
             return new AnalyzerConfig(
                     path(packages, "src/test/java/"),
-                    path(packages, "build/classes/test"));
+                    path(packages, "build/classes/test", "out/test/classes"));
         }
 
         public AnalyzerConfig mainAndTest(String... packages) {
             return new AnalyzerConfig(
                     path(packages, "src/main/java/", "src/test/java/"),
-                    path(packages, "target/classes/main", "target/classes/test"));
+                    path(packages, "target/classes/main", "out/production/classes", "target/classes/test", "out/test/classes"));
         }
 
         private List<Path> path(String[] packs, String... paths) {

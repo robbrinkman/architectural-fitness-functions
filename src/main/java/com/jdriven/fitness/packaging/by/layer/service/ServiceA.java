@@ -1,6 +1,6 @@
-package com.jdriven.demo.jdepend.pbl.service;
+package com.jdriven.fitness.packaging.by.layer.service;
 
-import com.jdriven.demo.jdepend.pbl.repository.RepositoryA;
+import com.jdriven.fitness.packaging.by.layer.repository.RepositoryA;
 
 public class ServiceA {
 

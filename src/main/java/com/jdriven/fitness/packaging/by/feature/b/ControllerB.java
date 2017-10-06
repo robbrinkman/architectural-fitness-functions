@@ -1,4 +1,4 @@
-package com.jdriven.demo.jdepend.pbf.b;
+package com.jdriven.fitness.packaging.by.feature.b;
 
 public class ControllerB {
 
