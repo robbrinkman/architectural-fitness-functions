@@ -1,27 +1,13 @@
 package com.jdriven.demo.jdepend.pbl;
 
-import com.structurizr.Workspace;
-import com.structurizr.analysis.ComponentFinder;
-import com.structurizr.analysis.NameSuffixTypeMatcher;
-import com.structurizr.analysis.TypeMatcherComponentFinderStrategy;
-import com.structurizr.model.*;
 import guru.nidi.codeassert.config.AnalyzerConfig;
 import guru.nidi.codeassert.config.GradleAnalyzerConfig;
 import guru.nidi.codeassert.dependency.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import static guru.nidi.codeassert.junit.CodeAssertMatchers.hasNoCycles;
 import static guru.nidi.codeassert.junit.CodeAssertMatchers.matchesRulesExactly;
-import static guru.nidi.codeassert.junit.CodeAssertMatchers.matchesRulesIgnoringNonExisting;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class VerifyPackageByLayerTest {
@@ -32,8 +18,6 @@ public class VerifyPackageByLayerTest {
     public void configureAnalyzer() {
         analyzerConfig = GradleAnalyzerConfig.gradle().main();
     }
-
-
 
 
     @Test
