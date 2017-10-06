@@ -26,53 +26,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class VerifyPackageByLayerTest {
 
+    private AnalyzerConfig analyzerConfig;
 
-    @Test
-    public void verifyThatThereArenoCyclicDependencies() {
-        AnalyzerConfig config = GradleAnalyzerConfig.gradle().main();
-
-//        config.getSourcePaths().forEach(System.out::println);
-//        config.getClasses().forEach(System.out::println);
-//        config.getSources().forEach(System.out::println);
-        assertThat(new DependencyAnalyzer(config).analyze(), hasNoCycles());
+    @Before
+    public void configureAnalyzer() {
+        analyzerConfig = GradleAnalyzerConfig.gradle().main();
     }
 
 
-    @Test
-    public void voidStructurizer() throws Exception {
-        Workspace workspace = new Workspace("Big Bank plc", "This is an example workspace to illustrate the key features of Structurizr, based around a fictional online banking system.");
-        Model model = workspace.getModel();
-        SoftwareSystem mySoftwareSystem = model.addSoftwareSystem(Location.Internal, "Internet Banking System", "Allows customers to view information about their bank accounts and make payments.");
 
-        Container webApplication = mySoftwareSystem.addContainer("Web Application", "Description", "Apache Tomcat 7.x");
-        ComponentFinder componentFinder = new ComponentFinder(webApplication, "com.jdriven.demo.jdepend.pbf", new TypeMatcherComponentFinderStrategy(
-                new NameSuffixTypeMatcher("Controller", "", ""),
-                new NameSuffixTypeMatcher("Service", "", "")));
-//           ComponentFinder componentFinder = new ComponentFinder(
-//                   webApplication, "com.mycompany.mysoftwaresystem",
-        Set<Component> components = componentFinder.findComponents();
-        components.forEach(component -> {
-            component.getCode().forEach(codeElement -> {
-                CodeElement e;
-                System.out.println(codeElement.getCategory());
-                System.out.println(codeElement.getType());
-                System.out.println(codeElement.getLanguage());
-                System.out.println(codeElement.getName());
-                System.out.println(codeElement.getVisibility());
-            });
-            component.getRelationships().forEach(System.out::println);
-        });
-    }
 
-    //       @Ignore
     @Test
     public void verifyPackageByLayer() {
-        AnalyzerConfig config = GradleAnalyzerConfig.gradle().main();
 
-        config.getClasses().forEach(System.out::println);
-
+        // Dependency rules for Packaging by Layer
         class ComJdrivenDemoJdependPbl extends DependencyRuler {
-            // Rules for org.proj.dep, org.proj.model, org.proj.util
+
+
+            // Rules for layer child packages
             DependencyRule controller, service, repository;
 
             @Override
@@ -87,8 +58,11 @@ public class VerifyPackageByLayerTest {
             }
         }
 
+
+        // Dependency Rules for Packaging By Feature
         class ComJdrivenDemoJdependPbf extends DependencyRuler {
-            // Rules for org.proj.dep, org.proj.model, org.proj.util
+
+            // Rules for feature child packages
             DependencyRule a, b;
 
             @Override
@@ -111,11 +85,14 @@ public class VerifyPackageByLayerTest {
                 .withRelativeRules(new ComJdrivenDemoJdependPbf())
                 .withExternals("java.*", "org.*", "net.*");
 
-        config.getSourcePaths().forEach(System.out::println);
-        config.getSources().forEach(System.out::println);
 
-        DependencyResult result = new DependencyAnalyzer(config).rules(rules).analyze();
+        DependencyResult result = new DependencyAnalyzer(analyzerConfig).rules(rules).analyze();
         assertThat(result, matchesRulesExactly());
+    }
+
+    @Test
+    public void verifyThatThereAreNoCyclicDependencies() {
+        assertThat(new DependencyAnalyzer(analyzerConfig).analyze(), hasNoCycles());
     }
 
 
