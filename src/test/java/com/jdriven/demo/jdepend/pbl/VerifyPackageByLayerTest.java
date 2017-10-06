@@ -3,25 +3,18 @@ package com.jdriven.demo.jdepend.pbl;
 import guru.nidi.codeassert.config.AnalyzerConfig;
 import guru.nidi.codeassert.config.GradleAnalyzerConfig;
 import guru.nidi.codeassert.dependency.*;
-import org.junit.Before;
 import org.junit.Test;
 
-import static guru.nidi.codeassert.junit.CodeAssertMatchers.hasNoCycles;
 import static guru.nidi.codeassert.junit.CodeAssertMatchers.matchesRulesExactly;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class VerifyPackageByLayerTest {
 
-    private AnalyzerConfig analyzerConfig;
-
-    @Before
-    public void configureAnalyzer() {
-        analyzerConfig = GradleAnalyzerConfig.gradle().main();
-    }
-
 
     @Test
     public void verifyPackageByLayer() {
+
+        AnalyzerConfig analyzerConfig = GradleAnalyzerConfig.gradle().main("com.jdriven.demo.jdepend.pbl");
 
         // Dependency rules for Packaging by Layer
         class ComJdrivenDemoJdependPbl extends DependencyRuler {
@@ -42,6 +35,22 @@ public class VerifyPackageByLayerTest {
             }
         }
 
+
+        // All dependencies are forbidden, except the ones defined in OrgProj
+        // java, org, net packages may be used freely
+        DependencyRules rules = DependencyRules.denyAll()
+                .withRelativeRules(new ComJdrivenDemoJdependPbl())
+                .withExternals("java.*", "org.*", "net.*");
+
+
+        DependencyResult result = new DependencyAnalyzer(analyzerConfig).rules(rules).analyze();
+        assertThat(result, matchesRulesExactly());
+    }
+
+    @Test
+    public void verifyPackageByFeature() {
+
+        AnalyzerConfig analyzerConfig = GradleAnalyzerConfig.gradle().main("com.jdriven.demo.jdepend.pbf");
 
         // Dependency Rules for Packaging By Feature
         class ComJdrivenDemoJdependPbf extends DependencyRuler {
@@ -65,18 +74,12 @@ public class VerifyPackageByLayerTest {
         // All dependencies are forbidden, except the ones defined in OrgProj
         // java, org, net packages may be used freely
         DependencyRules rules = DependencyRules.denyAll()
-                .withRelativeRules(new ComJdrivenDemoJdependPbl())
                 .withRelativeRules(new ComJdrivenDemoJdependPbf())
                 .withExternals("java.*", "org.*", "net.*");
 
 
         DependencyResult result = new DependencyAnalyzer(analyzerConfig).rules(rules).analyze();
         assertThat(result, matchesRulesExactly());
-    }
-
-    @Test
-    public void verifyThatThereAreNoCyclicDependencies() {
-        assertThat(new DependencyAnalyzer(analyzerConfig).analyze(), hasNoCycles());
     }
 
 
